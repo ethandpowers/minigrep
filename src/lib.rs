@@ -1,5 +1,7 @@
 use std::{env, error::Error, fs};
 
+/// Run the program logic, given a config object.
+/// Will perform the correct search and print the result to stdout.
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.file_path)?;
 
@@ -16,6 +18,21 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+/// Performs a case-sensitive search for the query in the contents file, and 
+/// returns a vector of lines that contain the query.
+///
+/// # Examples
+/// ```
+/// let query = "duct";
+/// let contents = "\
+/// Rust:
+/// safe, fast, productive.
+/// Pick three.";
+///
+/// let results = minigrep::search(query, contents);
+///
+/// assert_eq!(results, vec!["safe, fast, productive."]);
+/// ```
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     contents
         .lines()
@@ -23,6 +40,22 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
         .collect()
 }
 
+
+/// Performs a case-insensitive search for the query in the contents file.
+/// returns a vector of lines that contain the query.
+///
+/// # Examples
+/// ```
+/// let query = "Duct";
+/// let contents = "\
+/// Rust:
+/// safe, fast, productive.
+/// Pick three.";
+///
+/// let results = minigrep::search_case_insensitive(query, contents);
+///
+/// assert_eq!(results, vec!["safe, fast, productive."]);
+/// ```
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let query = query.to_lowercase();
     let mut results = Vec::new();
@@ -34,6 +67,8 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a st
     results
 }
 
+
+/// Holds the query string, the file path to be searched, and whether or not the search should be case sensitive.
 pub struct Config {
     pub query: String,
     pub file_path: String,
